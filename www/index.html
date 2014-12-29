@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>Navigator | Onsen UI</title>  
+  <link rel="stylesheet" href="css/app.css"/>
+  <link rel="stylesheet" href="css/onsenui.css">
+  <link rel="stylesheet" href="css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/example.css">
+
+  <script src="js/angular.js"></script>    
+  <script src="js/onsenui.js"></script>    
+  <script src="js/app.js"></script>  
+  <script src='http://maps.googleapis.com/maps/api/js?sensor=false'></script>
+  <script src='js/lodash.underscore.min.js'></script>
+  <script src="js/angular-google-maps.js"></script>
+
+  <script>
+    var app = angular.module('myApp', ['onsen', 'uiGmapgoogle-maps']);
+    app.controller('PageController', function($scope) {
+      var options = $scope.myNavigator.getCurrentPage().options;
+      console.log(myNavigator.getPages().length);
+      console.log(options);
+
+      $scope.init = function (){
+              console.log("init");
+              if (typeof google !== 'undefined') {
+                      $scope.mapError = false;
+              } else {
+                     $scope.mapError = true;
+                     console.log("Error loading map");
+                     return;
+             }
+
+             $scope.oInfo = {
+                     coords: { latitude: 42.734078, longitude: -84.567166},
+                     show: false,
+                     header: "",
+                     zone: ""
+             };
+
+             $scope.marker = {
+                     events: {
+                             click: function(e){
+                                     console.log("Click!");
+                                     $scope.oInfo.show = true;
+                             }
+                     }
+             };
+
+             $scope.closeInfo = function(){
+                     console.log("Closing");
+                     $scope.oInfo.show = false;
+             };
+
+             $scope.map = {
+                     center: { latitude: 42.734078, longitude: -84.567166 },
+                     zoom: 11,
+                     events: { 
+                             tilesloaded: function (map) {
+                                     
+                             }
+                     }
+             };
+
+     }
+
+
+    });
+
+  </script>
+  
+</head>
+
+<body>    
+  <ons-navigator var="myNavigator">
+
+    <ons-page>
+      <ons-toolbar>
+        <div class="center">Navigator</div>
+        <div class="right"><ons-toolbar-button modifier="border"><ons-icon icon="ion-navicon" style="font-size: 32px"></ons-icon>fuga</ons-toolbar-button></div>
+      </ons-toolbar>
+
+      <div style="text-align: center">
+        <br>
+        <ons-button 
+          ng-click="myNavigator.pushPage('page1.html', {hoge: 'hoge'})">
+          Push Page 2
+        </ons-button>
+      </div>
+    </ons-page>
+  
+  </ons-navigator>  
+
+  <script type="text/ons-template" id="page1.html">
+    <ons-page ng-controller="PageController" data-ng-init="init()">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>Back</ons-back-button></div>
+        <div class="center">Page 2</div>
+      </ons-toolbar>
+
+      <div style="text-align: center">
+        <h1>Page 2</h1>
+        <ons-button 
+          ng-click="myNavigator.pushPage('page1.html', {title: 'Page'})">
+          Push Page
+          </ons-button>
+
+        <ons-button 
+          ng-click="myNavigator.popPage()">
+          Pop Page
+        </ons-button>
+      </div>
+      <div style="text-align: center">
+          <p>test</p>
+          <ui-gmap-google-map center="map.center" pan="true" zoom="map.zoom" draggable="true" events="map.events" >
+                <ui-gmap-window
+                    show="oInfo.show"
+                    coords="oInfo.coords"
+                    closeClick="closeInfo()"
+                    >
+                    <div>Content</div>
+                </ui-gmap-window>
+                <ui-gmap-marker idKey="1" coords="{latitude: 42.734078, longitude: -84.567166}" events="marker.events" >
+                </ui-gmap-marker>
+         </ui-gmap-google-map>
+      </div>
+    </ons-page>
+  </script>
+  
+</body>
+</html>
